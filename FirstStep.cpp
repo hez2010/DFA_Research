@@ -227,7 +227,7 @@ int main()
     DFA dfa(".e2*.3.??7??");
     if (dfa.Match("sdnu92c9w2c9e22436i308877dis"))
     {
-        printf("\n%d matches:\n", dfa.matches.size());
+        printf("\n%llu matches:\n", dfa.matches.size());
         for (auto match : dfa.matches)
             printf("%s\n", match.c_str());
     }
