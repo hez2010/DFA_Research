@@ -89,7 +89,7 @@ class DFA
         if (index >= str.length() || node == nullptr || node->AcceptState.size() == 0)
         {
             PutBlankSpace(step - 1);
-            printf("Reached at end\n");
+            printf("Mismatched\n");
             return false;
         }
         PutBlankSpace(step);
@@ -112,14 +112,12 @@ class DFA
                 printf("Succeeded\n");
                 if (node->CanBeEnd)
                 {
-                    record = record.substr(0, step + 1);
-                    matchCount++;
-                    printf("\n");
-                    PutBlankSpace(step);
-                    printf("Done, matched result: %s\n\n", record.c_str());
+                    matches.push_back(record.substr(0, step + 1));
+                    PutBlankSpace(step + 1);
+                    printf("Matched\n");
                     result = true;
                 }
-                result = result || MatchProcess(str, index + 1, state.NextNode, step + 1);
+                result = MatchProcess(str, index + 1, state.NextNode, step + 1) || result;
             }
             else
             {
@@ -130,7 +128,7 @@ class DFA
     }
 
   public:
-    int matchCount = 0;
+    std::vector<std::string> matches;
     DFA(std::string patterns)
     {
         if (patterns.empty())
@@ -212,13 +210,13 @@ class DFA
 
     bool Match(std::string str)
     {
-        matchCount = 0;
+        matches.clear();
         printf("Input str: %s\n", str.c_str());
         auto len = str.length();
         auto result = false;
         for (auto i = 0; i < len; i++)
         {
-            result = result || MatchProcess(str, i, start, 0);
+            result = MatchProcess(str, i, start, 0) || result;
         }
         return result;
     }
@@ -226,9 +224,13 @@ class DFA
 
 int main()
 {
-    DFA dfa("9?2*436?3.8?7*");
+    DFA dfa(".e2*.3.??7??");
     if (dfa.Match("sdnu92c9w2c9e22436i308877dis"))
-        printf("Matches: %d\n", dfa.matchCount);
+    {
+        printf("\n%d matches:\n", dfa.matches.size());
+        for (auto match : dfa.matches)
+            printf("%s\n", match.c_str());
+    }
     else
         printf("No match!\n");
     getchar();
